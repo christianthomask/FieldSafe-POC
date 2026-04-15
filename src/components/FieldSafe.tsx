@@ -16,21 +16,28 @@ type TabId = (typeof TABS)[number]["id"] | "detail";
 const STORAGE_KEY = "fieldsafe-data";
 const emptyData: AppData = { incidents: [], observations: [] };
 
+// Cache the parsed snapshot so useSyncExternalStore gets a stable reference.
+// Only re-parse when the raw localStorage string actually changes.
+let cachedRaw: string | null = null;
+let cachedData: AppData = emptyData;
+
 function getSnapshot(): AppData {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw !== cachedRaw) {
+      cachedRaw = raw;
+      cachedData = raw ? JSON.parse(raw) : emptyData;
+    }
   } catch {
-    // first load
+    // first load or corrupted
   }
-  return emptyData;
+  return cachedData;
 }
 
 function getServerSnapshot(): AppData {
   return emptyData;
 }
 
-// Simple subscribe for useSyncExternalStore — we manually trigger via save()
 let listeners: Array<() => void> = [];
 function subscribe(cb: () => void) {
   listeners.push(cb);
@@ -40,6 +47,8 @@ function subscribe(cb: () => void) {
 }
 
 function notifyListeners() {
+  // Invalidate cache so next getSnapshot() re-parses
+  cachedRaw = null;
   listeners.forEach((l) => l());
 }
 
