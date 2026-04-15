@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
+import { ServiceWorkerRegistrar } from "@/components/ServiceWorkerRegistrar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -11,7 +12,6 @@ export const metadata: Metadata = {
   title: "FieldSafe — Safety & Compliance Logger",
   description:
     "Mobile-first safety incident and observation logger for field service companies.",
-  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -34,7 +34,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} h-full`}>
-      <body className="h-full">{children}</body>
+      <head>
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+      </head>
+      <body className="h-full">
+        {children}
+        <ServiceWorkerRegistrar />
+      </body>
     </html>
   );
 }

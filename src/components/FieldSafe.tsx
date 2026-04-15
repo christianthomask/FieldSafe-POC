@@ -9,6 +9,7 @@ import ReportScreen from "./ReportScreen";
 import ObservationScreen from "./ObservationScreen";
 import ExportScreen from "./ExportScreen";
 import IncidentDetail from "./IncidentDetail";
+import InstallPrompt from "./InstallPrompt";
 
 type TabId = (typeof TABS)[number]["id"] | "detail";
 
@@ -74,6 +75,7 @@ export default function FieldSafe() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
+      <InstallPrompt />
       {/* Header */}
       <div className="bg-slate-800 px-4 py-3 flex items-center justify-between flex-shrink-0">
         <div>
